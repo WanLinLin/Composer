@@ -57,3 +57,11 @@ typings/
 # dotenv environment variables file
 .env
 
+
+make_a_certificate.txt
+
+express.md
+
+cert.pem
+
+key.pem
