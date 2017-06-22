@@ -57,11 +57,10 @@ typings/
 # dotenv environment variables file
 .env
 
-
+# learning notes
 make_a_certificate.txt
-
 express.md
 
+# X.509 files
 cert.pem
-
 key.pem
