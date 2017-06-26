@@ -1,55 +1,5 @@
 extends layout
 
 block content
-  // h1= title
-  // p Welcome to #{title}
-
-  div.jumbotron
-    h1.display-3= title
-    p.lead Let's get some lyrics
-
-  form(action='/' method='post')
-    div.row.form-group
-      div.col-sm-12
-        input.form-control(type='text', placeholder='請輸入句子' name='inputSentence')
-    div.row.form-group
-      div.col-sm-12
-        select.custom-select.form-control(name='wordNum')
-          option(value='2' selected) 2個字
-          option(value='3') 3個字
-          option(value='4') 4個字
-          option(value='5') 5個字
-    div.row.form-group
-      div.col-sm-12
-        select.custom-select.form-control(name='rhyme')
-          option(value='ㄓ' selected) ㄓ韻
-          option(value='ㄔ') ㄔ韻
-          option(value='ㄕ') ㄕ韻
-          option(value='ㄖ') ㄖ韻
-          option(value='ㄗ') ㄗ韻
-          option(value='ㄘ') ㄘ韻
-          option(value='ㄙ') ㄙ韻
-          option(value='ㄧ') ㄧ韻
-          option(value='ㄨ') ㄨ韻
-          option(value='ㄩ') ㄩ韻
-          option(value='ㄚ') ㄚ韻
-          option(value='ㄛ') ㄛ韻
-          option(value='ㄜ') ㄜ韻
-          option(value='ㄝ') ㄝ韻
-          option(value='ㄞ') ㄞ韻
-          option(value='ㄟ') ㄟ韻
-          option(value='ㄠ') ㄠ韻
-          option(value='ㄡ') ㄡ韻
-          option(value='ㄢ') ㄢ韻
-          option(value='ㄣ') ㄣ韻
-          option(value='ㄤ') ㄤ韻
-          option(value='ㄥ') ㄥ韻
-          option(value='ㄦ') ㄦ韻
-    div.row.form-group
-      div.col-sm-12
-        button.btn.btn-primary.form-control(type='submit') 推薦
-
-
-  script(src='https://code.jquery.com/jquery-3.1.1.slim.min.js', integrity='sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n', crossorigin='anonymous')
-  script(src='https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js' integrity='sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb' crossorigin='anonymous')
-  script(src='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js' integrity='sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn' crossorigin='anonymous')
+  h1= title
+  p Welcome to #{title}
