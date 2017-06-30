@@ -2,7 +2,7 @@ extends layout
 
 block content
 
-  form(action='/lyric' method='post')
+  form
     div.row.form-group
       div.col-sm-12
         input.form-control(type='text', placeholder='請輸入句子' name='inputSentence')
@@ -42,12 +42,12 @@ block content
           option(value='ㄦ') ㄦ韻
     div.row.form-group
       div.col-sm-12
-        button.btn.btn-primary.form-control(type='submit') 推薦
+        button#rec-but.btn.btn-primary.form-control 推薦
 
-    if words
+  div.row.form-group
+    div.col-sm-12
       div.card
-        ul.list-group.list-group-flush
-            each word in words
-              li.list-group-item #{word}
-            else
-              div.col-sm-12 There are no books.
+        ul#word-list.list-group.list-group-flush
+
+block js
+  script(src='javascripts/lyric.js')

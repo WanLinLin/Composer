@@ -24,7 +24,6 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 nodejieba.load({ userDict: 'dict/dict.txt.big.txt' });
 
 exports.recommendLyrics = function(req, res) {
-
   // cut the sentence
   var words = nodejieba.cut(req.body.inputSentence);
   // the last word
@@ -74,7 +73,7 @@ exports.recommendLyrics = function(req, res) {
       words.push(result[i].t_word[0].word);
     }
 
-    res.render('lyric', { title: 'Composer', words: words });
+    res.json({words: words});
   }
   );
   
