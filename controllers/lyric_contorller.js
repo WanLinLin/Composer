@@ -33,48 +33,33 @@ exports.recommendLyrics = function(req, res) {
 
   async.waterfall([
     function(callback) {
-      Word.findOne({ word: tWord }).exec(function (err, word) {
-        assert.equal(null, err);
-        callback(null, word._id);
+      // get tail word id
+      Word.getId(tWord, function(res) {
+        callback(null, res);
       });
     },
     function(tWordId, callback) { 
-      Word
-      .find({
-        rhyme: rhyme,
-        $where: 'this.word.length === ' + num
-      })
-      .select('_id')
-      .exec(function(err, nrWordIds) {
-        assert.equal(null, err);
-        callback(null, tWordId, nrWordIds);
+      // get the num and rhyme qualified words' ids
+      Word.getNRIds(num, rhyme, function(res) {
+        callback(null, tWordId, res);
       });
     }, 
     function(tWordId, nrWordIds, callback) {
-      Relation
-      .find({
-        f_word: tWordId,
-        t_word: { $in: nrWordIds },
-        link: { $gte: 1 }
-      })
-    // .limit(10)
-    .sort({ distance: -1 })
-    .populate('t_word')
-    .exec(function (err, relations) {
-      assert.equal(null, err);
-      callback(null, relations);
-    });
-  }
-  ], function (err, result) {
-    assert.equal(null, err);
-    var words = [];
-
-    for (var i = 0; i < result.length; i++) {
-      words.push(result[i].t_word[0].word);
+      Relation.getRelations(tWordId, nrWordIds, function(res) {
+        callback(null, res);
+      });
     }
+    ], function (err, result) {
+      assert.equal(null, err);
+      var words = [];
 
-    res.json({words: words});
-  }
+      for (var i = 0; i < result.length; i++) {
+        words.push(result[i].t_word[0].word);
+      }
+
+      res.json({words: words});
+    }
   );
-  
+
 };
+
