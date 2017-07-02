@@ -1,19 +1,19 @@
-var f = require('util').format;
-var assert = require('assert');
-var nodejieba = require('nodejieba');
-var mongoose = require('mongoose');
-var async = require('async');
+const f = require('util').format;
+const assert = require('assert');
+const nodejieba = require('nodejieba');
+const mongoose = require('mongoose');
+const async = require('async');
 
 // Models
-var Word = require('../models/word');
-var Relation = require('../models/relation');
+const Word = require('../models/word');
+const Relation = require('../models/relation');
 
 // DB configuration
-var db;
-var user = encodeURIComponent('Leo');
-var password = encodeURIComponent('Leo@composer');
-var authMechanism = "DEFAULT";
-var url = f("mongodb://%s:%s@localhost:27017/composer?authMechanism=%s", user, password, authMechanism);
+let db;
+let user = encodeURIComponent('Leo');
+let password = encodeURIComponent('Leo@composer');
+let authMechanism = "DEFAULT";
+let url = f("mongodb://%s:%s@localhost:27017/composer?authMechanism=%s", user, password, authMechanism);
 
 // connect to mongodb
 mongoose.connect(url);
@@ -25,36 +25,99 @@ nodejieba.load({ userDict: 'dict/dict.txt.big.txt' });
 
 exports.recommendLyrics = function(req, res) {
   // cut the sentence
-  var words = nodejieba.cut(req.body.inputSentence);
+  let words = nodejieba.cut(req.body.inputSentence);
+  console.log(words);
   // the last word
-  var tWord = words.pop();
-  var rhyme = req.body.rhyme;
-  var num = req.body.wordNum;
+  let tWord = words.pop();
+  let rhyme = req.body.rhyme;
+  let num = req.body.wordNum;
+
+  let fWordsIds;
+  let tWordId;
+  let nrWordIds;
 
   async.waterfall([
+    // find the tail word Id
     function(callback) {
-      // get tail word id
       Word.getId(tWord, function(res) {
+        tWordId = res;
+        callback(null);
+      });
+    },
+    // find the front words ids
+    function(callback) {
+      Word.getIds(words, function(res) {
+        fWordsIds = res;
+        callback(null);
+      });
+    },
+    // get the num and rhyme qualified words ids
+    function(callback) { 
+      Word.getNRIds(num, rhyme, function(res) {
+        nrWordIds = res;
+        callback(null);
+      });
+    },
+    // get num rhyme qualified related words ordered by link and distance
+    function(callback) {
+      Relation.getRels(tWordId, nrWordIds, function(res) {
         callback(null, res);
       });
     },
-    function(tWordId, callback) { 
-      // get the num and rhyme qualified words' ids
-      Word.getNRIds(num, rhyme, function(res) {
-        callback(null, tWordId, res);
-      });
-    }, 
-    function(tWordId, nrWordIds, callback) {
-      Relation.getRelations(tWordId, nrWordIds, function(res) {
+    // get rec words which exist in the same sentense with front words
+    function(nrlRels, callback) {
+      Relation.getCounts(fWordsIds, nrlRels, function(res) {
+
+        // sort by link, then distance, then count
+        res.sort(function(a, b) {
+          if(a.link > b.link) return -1;
+          if(a.link < b.link) return 1;
+          if(a.distance > b.distance) return -1;
+          if(a.distance < b.distance) return 1;
+          if(a.count > b.count) return -1;
+          if(a.count < b.count) return 1;
+
+          return 0;
+        });
+
         callback(null, res);
       });
-    }
-    ], function (err, result) {
-      assert.equal(null, err);
-      var words = [];
+    },
+    // recommend nr words if there's no relation to the sentence
+    function(recs, callback) {
+      if (recs.length < 20) {
+        let num = 20 - recs.length;
 
-      for (var i = 0; i < result.length; i++) {
-        words.push(result[i].t_word[0].word);
+        // random nr words
+        nrWordIds.sort(function() {
+          return 0.5 - Math.random();
+        });
+
+        Word.find({
+          _id: { $in: nrWordIds.slice(0, num) }
+        })
+        .exec(function (err, res) {
+          assert.equal(null, err);
+          callback(null, {recs: recs, nr: res});
+        });
+      }
+      else {
+        callback(null, {recs: recs});
+      }
+    }
+    ],
+    function (err, result) {
+      assert.equal(null, err);
+      let words = [];
+
+      for (let i = 0; i < result.recs.length; i++) {
+        words.push(result.recs[i].t_word[0].word);
+      }
+
+      if (result.nr !== null) {
+        for (let i = 0; i < result.nr.length; i++) {
+          words.push(result.nr[i].word);
+        }
       }
 
       res.json({words: words});

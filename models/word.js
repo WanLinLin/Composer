@@ -20,6 +20,17 @@ WordSchema.statics.getId = function (word, callback) {
   });
 };
 
+WordSchema.statics.getIds = function (words, callback) {
+  this.find({
+    word: { $in: words }
+  })
+  // .select('_id')
+  .exec((err, res) => {
+    assert.equal(null, err);
+    callback(res);
+  });
+};
+
 WordSchema.statics.getNRIds = function (num, rhyme, callback) {
   this.find({
     rhyme: rhyme,
