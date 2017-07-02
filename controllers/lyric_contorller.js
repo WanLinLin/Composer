@@ -79,7 +79,6 @@ exports.recommendLyrics = function(req, res) {
 
           return 0;
         });
-
         callback(null, res);
       });
     },
@@ -114,7 +113,7 @@ exports.recommendLyrics = function(req, res) {
         words.push(result.recs[i].t_word[0].word);
       }
 
-      if (result.nr !== null) {
+      if (result.nr !== undefined) {
         for (let i = 0; i < result.nr.length; i++) {
           words.push(result.nr[i].word);
         }
