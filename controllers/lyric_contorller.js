@@ -32,44 +32,44 @@ exports.recommendLyrics = function(req, res) {
   let rhyme = req.body.rhyme;
   let num = req.body.wordNum;
 
-  let fWordsIds;
+  let fWordIds;
   let tWordId;
   let nrWordIds;
 
   async.waterfall([
     // find the tail word Id
     function(callback) {
-      Word.getId(tWord, function(res) {
+      Word.getIdByWord(tWord, function(res) {
         tWordId = res;
         callback(null);
       });
     },
     // find the front words ids
     function(callback) {
-      Word.getIds(words, function(res) {
-        fWordsIds = res;
+      Word.getIdsByWords(words, function(res) {
+        fWordIds = res;
         callback(null);
       });
     },
     // get the num and rhyme qualified words ids
     function(callback) { 
-      Word.getNRIds(num, rhyme, function(res) {
+      Word.getIdsByNR(num, rhyme, function(res) {
         nrWordIds = res;
         callback(null);
       });
     },
     // get num rhyme qualified related words ordered by link and distance
     function(callback) {
-      Relation.getRels(tWordId, nrWordIds, function(res) {
+      Relation.findByFwTws(tWordId, nrWordIds, function(res) {
         callback(null, res);
       });
     },
     // get rec words which exist in the same sentense with front words
     function(nrlRels, callback) {
-      Relation.getCounts(fWordsIds, nrlRels, function(res) {
+      Relation.getCounts(fWordIds, nrlRels, function(res) {
 
         // sort by link, then distance, then count
-        res.sort(function(a, b) {
+        res.sort((a, b) => {
           if(a.link > b.link) return -1;
           if(a.link < b.link) return 1;
           if(a.distance > b.distance) return -1;
@@ -114,7 +114,7 @@ exports.recommendLyrics = function(req, res) {
         words.push(result.recs[i].t_word[0].word);
       }
 
-      if (result.nr !== null) {
+      if (result.nr) {
         for (let i = 0; i < result.nr.length; i++) {
           words.push(result.nr[i].word);
         }
