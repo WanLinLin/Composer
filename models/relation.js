@@ -31,7 +31,7 @@ RelationSchema.statics.getCounts = function(fWordsIds, tRels, callback) {
 
   // return an empty array when tRels is empty
   if (tRels.length === 0) {
-    return callback([]);
+    return callback(rels);
   }
 
   for (let i = 0; i < tRels.length; i++) {
@@ -45,7 +45,9 @@ RelationSchema.statics.getCounts = function(fWordsIds, tRels, callback) {
     .exec((err, res) => {
       rels[i].count = res;
 
-      if(i === tRels.length - 1) callback(rels);
+      if(i === tRels.length - 1) {
+        callback(rels);
+      }
     });
   }
 };

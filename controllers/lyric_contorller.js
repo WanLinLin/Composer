@@ -79,7 +79,6 @@ exports.recommendLyrics = function(req, res) {
 
           return 0;
         });
-
         callback(null, res);
       });
     },
