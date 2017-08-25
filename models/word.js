@@ -11,7 +11,7 @@ let WordSchema = new Schema({
 =            Static Methods            =
 ======================================*/
 
-WordSchema.statics.getId = function (word, callback) {
+WordSchema.statics.getIdByWord = function (word, callback) {
   this.findOne({ word: word })
   .select('_id')
   .exec((err, res) => {
@@ -20,24 +20,24 @@ WordSchema.statics.getId = function (word, callback) {
   });
 };
 
-WordSchema.statics.getIds = function (words, callback) {
+WordSchema.statics.getIdsByWords = function (words, callback) {
   this.find({
     word: { $in: words }
   })
-  // .select('_id')
+  .select('_id')
   .exec((err, res) => {
     assert.equal(null, err);
     callback(res);
   });
 };
 
-WordSchema.statics.getNRIds = function (num, rhyme, callback) {
+WordSchema.statics.getIdsByNR = function (num, rhyme, callback) {
   this.find({
     rhyme: rhyme,
     $where: 'this.word.length === ' + num
   })
   .select('_id')
-  .exec(function(err, res) {
+  .exec((err, res) => {
     assert.equal(null, err);
     callback(res);
   });

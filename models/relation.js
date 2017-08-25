@@ -13,18 +13,14 @@ let RelationSchema = new Schema({
 =            Static Methods            =
 ======================================*/
 
-RelationSchema.statics.getRels = function(fWordId, tWordsIds, callback) {
+RelationSchema.statics.findByFwTws = function(fWordId, tWordsIds, callback) {
   this.find({
     f_word: fWordId,
     t_word: { $in: tWordsIds }
-    // link: { $gte: 1 }
   })
-  // sort priority link higher than distance
-  // .sort({ link: -1, distance: -1 })
-  // .populate('f_word')
   .populate('t_word')
   .limit(20)
-  .exec(function (err, res) {
+  .exec((err, res) => {
     assert.equal(null, err);
     callback(res);
   });
@@ -33,7 +29,7 @@ RelationSchema.statics.getRels = function(fWordId, tWordsIds, callback) {
 RelationSchema.statics.getCounts = function(fWordsIds, tRels, callback) {
   let rels = [];
 
-  // callback when the tRels is empty
+  // return an empty array when tRels is empty
   if (tRels.length === 0) {
     return callback([]);
   }
@@ -45,7 +41,8 @@ RelationSchema.statics.getCounts = function(fWordsIds, tRels, callback) {
     this.count({
       f_word: { $in: fWordsIds },
       t_word: tWord,
-    }, function(err, res) {
+    })
+    .exec((err, res) => {
       rels[i].count = res;
 
       if(i === tRels.length - 1) callback(rels);
