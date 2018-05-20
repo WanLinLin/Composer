@@ -21,7 +21,7 @@ db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 // load jieba traditional Chinese dicttionary
-nodejieba.load({ userDict: 'dict/dict.txt.big.txt' });
+nodejieba.load({ userDict: 'assets/dict.txt.big.txt' });
 
 exports.recommendLyrics = function(req, res) {
   // cut the sentence
