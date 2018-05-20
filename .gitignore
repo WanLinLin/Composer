@@ -64,3 +64,6 @@ express.md
 # X.509 files
 cert.pem
 key.pem
+
+# vscode setting
+.vscode/settings.json
