@@ -2,45 +2,32 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const assert = require('assert');
 
-let WordSchema = new Schema({ 
+const WordSchema = new Schema({
   word: { type: String, required: true },
   rhyme: { type: String, required: true }
 });
 
-/*======================================
-=            Static Methods            =
-======================================*/
+WordSchema.statics.getIdByWord = function(word) {
+  return this.findOne({ word: word })
+    .select('_id')
+    .exec()
+}
 
-WordSchema.statics.getIdByWord = function (word, callback) {
-  this.findOne({ word: word })
-  .select('_id')
-  .exec((err, res) => {
-    assert.equal(null, err);
-    callback(res);
-  });
-};
-
-WordSchema.statics.getIdsByWords = function (words, callback) {
-  this.find({
+WordSchema.statics.getIdsByWords = function (words) {
+  return this.find({
     word: { $in: words }
   })
-  .select('_id')
-  .exec((err, res) => {
-    assert.equal(null, err);
-    callback(res);
-  });
-};
+    .select('_id')
+    .exec()
+}
 
-WordSchema.statics.getIdsByNR = function (num, rhyme, callback) {
-  this.find({
+WordSchema.statics.getIdsByNR = function (num, rhyme) {
+  return this.find({
     rhyme: rhyme,
     $where: 'this.word.length === ' + num
   })
-  .select('_id')
-  .exec((err, res) => {
-    assert.equal(null, err);
-    callback(res);
-  });
-};
+    .select('_id')
+    .exec()
+}
 
 module.exports = mongoose.model('Word', WordSchema, 'words');
