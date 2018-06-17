@@ -9,47 +9,33 @@ let RelationSchema = new Schema({
   distance: { type: Number, required: true }
 });
 
-/*======================================
-=            Static Methods            =
-======================================*/
-
-RelationSchema.statics.findByFwTws = function(fWordId, tWordsIds, callback) {
-  this.find({
+RelationSchema.statics.findByFwTws = function(fWordId, tWordsIds) {
+  return this.find({
     f_word: fWordId,
     t_word: { $in: tWordsIds }
   })
   .populate('t_word')
   .limit(20)
-  .exec((err, res) => {
-    assert.equal(null, err);
-    callback(res);
-  });
-};
+  .exec()
+}
 
-RelationSchema.statics.getCounts = function(fWordsIds, tRels, callback) {
-  let rels = [];
-
+RelationSchema.statics.getCounts = function(fWordsIds, tRels) {
   // return an empty array when tRels is empty
   if (tRels.length === 0) {
-    return callback(rels);
+    return Promise.resolve([])
   }
 
-  for (let i = 0; i < tRels.length; i++) {
-    rels[i] = tRels[i].toObject();
-    let tWord = rels[i].t_word[0]._id;
-
-    this.count({
+  return Promise.all(tRels.map((function(rel, i) {
+    return this.count({
       f_word: { $in: fWordsIds },
-      t_word: tWord,
+      t_word: rel.t_word[0]._id,
     })
-    .exec((err, res) => {
-      rels[i].count = res;
-
-      if(i === tRels.length - 1) {
-        callback(rels);
-      }
-    });
-  }
+    .exec()
+    .then(count => ({
+      ...rel.toObject(),
+      count,
+    }))
+  }).bind(this)))
 };
 
 module.exports = mongoose.model('Relation' , RelationSchema, 'relations');
