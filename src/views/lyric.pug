@@ -51,27 +51,36 @@ block content
 
 block js
   script.
-    $(document).ready(function() {
-      $('form').submit(function(e) {
-        var url = '/lyric';
+    window.onload = () => {
+      const form = document.querySelector('form')
+      form.onsubmit = event => {
+        const data = {}
+        new FormData(form).forEach((value, key) => {
+          data[key] = value
+        })
 
-        $.ajax({
-          type: 'post',
-          url: url,
-          data: $('form').serialize(),
-          success: function(data) {
-            var words = data.words;
-            var cardList = $('#word-list');
+        fetch('/lyric', {
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers: {
+            'content-type': 'application/json'
+          },
+        })
+        .then(res => res.json())
+        .then(body => {
+          const words = body.words
+          const wordList = document.querySelector('#word-list')
 
-            cardList.empty();
+          wordList.innerHTML = '' // clean previous words
 
-            for (var i = 0; i < words.length; i++) {
-              var word = words[i];
-              cardList.append('<li class="list-group-item">' + word + '</li>\n');
-            }
-          }
-        });
+          words.forEach(word => {
+            const li = document.createElement('li')
+            li.classList.add('list-group-item')
+            li.innerHTML = word
+            wordList.appendChild(li)
+          })
+        })
 
-        e.preventDefault(); // avoid to execute the actual submit of the form.
-      });
-    });
+        event.preventDefault(); // avoid to execute the actual submit of the form.
+      }
+    }
