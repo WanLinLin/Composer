@@ -11,9 +11,9 @@ const Relation = require('../models/relation');
 // DB configuration
 let db;
 let user = encodeURIComponent('Leo');
-let password = encodeURIComponent('Leo@googu');
+let password = encodeURIComponent('Leo@composer');
 let authMechanism = "DEFAULT";
-let url = f("mongodb://%s:%s@localhost:27017/googu?authMechanism=%s", user, password, authMechanism);
+let url = f("mongodb://%s:%s@localhost:27017/composer?authMechanism=%s", user, password, authMechanism);
 
 // connect to mongodb
 mongoose.connect(url);
