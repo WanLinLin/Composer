@@ -7,15 +7,15 @@ const Word = require('../models/word');
 const Relation = require('../models/relation');
 
 // DB configuration
-const db;
-const user = encodeURIComponent('Leo');
-const password = encodeURIComponent('Leo@composer');
-const authMechanism = "DEFAULT";
-const url = f("mongodb://%s:%s@localhost:27017/composer?authMechanism=%s", user, password, authMechanism);
+const user = process.env.DB_USER;
+const password = process.env.DB_PASSWORD;
+const host = process.env.DB_HOST;
+const url = f(`mongodb://${user}:${password}@${host}/googu`);
 
-// connect to mongodb
+mongoose.Promise = Promise; // setup mongoose promise library
 mongoose.connect(url);
-db = mongoose.connection;
+
+const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 // load jieba traditional Chinese dicttionary
