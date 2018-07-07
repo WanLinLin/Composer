@@ -4,12 +4,16 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+const nodejieba = require('nodejieba');
 
 var index = require('./routes/index');
 const lyric = require('./routes/lyric');
 const initDB = require('./models')
 
 initDB()
+
+// load jieba traditional Chinese dictionary
+nodejieba.load({ userDict: 'assets/dict.txt.big.txt' });
 
 var app = express();
 

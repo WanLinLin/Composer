@@ -1,11 +1,7 @@
 const nodejieba = require('nodejieba');
 
-// Models
 const Word = require('../models/word');
 const Relation = require('../models/relation');
-
-// load jieba traditional Chinese dicttionary
-nodejieba.load({ userDict: 'assets/dict.txt.big.txt' });
 
 exports.recommendLyrics = function(req, res) {
   // cut the sentence
