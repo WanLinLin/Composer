@@ -1,22 +1,8 @@
-const f = require('util').format;
 const nodejieba = require('nodejieba');
-const mongoose = require('mongoose');
 
 // Models
 const Word = require('../models/word');
 const Relation = require('../models/relation');
-
-// DB configuration
-const user = process.env.DB_USER;
-const password = process.env.DB_PASSWORD;
-const host = process.env.DB_HOST;
-const url = f(`mongodb://${user}:${password}@${host}/googu`);
-
-mongoose.Promise = Promise; // setup mongoose promise library
-mongoose.connect(url);
-
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 // load jieba traditional Chinese dicttionary
 nodejieba.load({ userDict: 'assets/dict.txt.big.txt' });

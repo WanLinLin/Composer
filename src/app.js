@@ -7,6 +7,9 @@ var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
 const lyric = require('./routes/lyric');
+const initDB = require('./models')
+
+initDB()
 
 var app = express();
 
